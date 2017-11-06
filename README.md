@@ -3,7 +3,7 @@
 Developed by Xia Sun (github: xiasun)
 
 A Qt widget for reading and displaying DICOM images series including some basic interactions.
-Please install dependencies and modify dependencies path in QtDicomViewer.pro file before use it.
+Please install dependencies and modify dependencies path in `QtDicomViewer.pro` file before use it.
 
 ### Dependencies
  - Qt 5.7
