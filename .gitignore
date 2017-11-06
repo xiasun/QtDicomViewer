@@ -1,0 +1,14 @@
+# Subdirectories
+.vs/
+.git/
+data/
+debug/
+release/
+
+# Others
+*.sln
+*.db
+*.opendb
+*.vcxproj
+*.filters
+*.user
