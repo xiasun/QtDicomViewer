@@ -12,6 +12,8 @@ QtDicomViewer::QtDicomViewer(QWidget *parent) :
     ui->setupUi(this);
     rows = 0;
     columns = 0;
+	minVal = INT_MAX;
+	maxVal = INT_MIN;
 	connect(ui->ImageViewer1, SIGNAL(clickInfo(int, int, Qt::MouseButtons)), this, SLOT(on_ImageVewer1_clicked(int, int, Qt::MouseButtons)));
 }
 
@@ -138,14 +140,29 @@ void QtDicomViewer::on_actionOpenFile_triggered() {
 					short int pixelValue = ((unsigned char)rawImage[i + 1] << 8) | (unsigned char)rawImage[i]; // unsigned char not char
 					imageC1.at<float>(i / 2) = float(pixelValue);
 				}
+				double minPixVal;
+				double maxPixVal;
+				Point minPixLoc;
+				Point maxPixLoc;
+				minMaxLoc(imageC1, &minPixVal, &maxPixVal, &minPixLoc, &maxPixLoc);
+				minVal = minPixVal < minVal ? minPixVal : minVal;
+				maxVal = maxPixVal > maxVal ? maxPixVal : maxVal;
+
 				Mat imageC3;
-				normalize(imageC1, imageC1, 255.0, 0, cv::NORM_MINMAX); // normalize before convert channel type
+				// normalize(imageC1, imageC1, 255.0, 0, cv::NORM_MINMAX); // normalize before convert channel type
 				cvtColor(imageC1, imageC3, CV_GRAY2RGB); 
 				slices.push_back(imageC3);
 			}
 		}
 	}
 
+	// global normalization
+	for (auto i = 0; i < slices.size(); ++i) {
+		cvtColor(slices[i], slices[i], CV_RGB2GRAY);
+		threshold(slices[i], slices[i], 0, 0, CV_THRESH_TOZERO); // ignore negative pixel values
+		slices[i] = 255 * (slices[i] / maxVal);
+		cvtColor(slices[i], slices[i], CV_GRAY2RGB);
+	}
 	segResults.resize(slices.size());
 
 	sliceId = (slices.size() / 2) - 1;

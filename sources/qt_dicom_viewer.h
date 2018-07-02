@@ -43,6 +43,8 @@ private:
     int rows; // rows and numbers for dicom files, assume same among series
     int columns;
 	int sliceId;
+	int minVal; 
+	int maxVal;
 	std::string toothID; // ID for the tooth being segmented
 	std::string dicomDir; // directory for dicom files
 	std::string dicomdirDir; // directory for DICOMDIR file
